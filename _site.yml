@@ -10,5 +10,5 @@ navbar:
     - text: "About"
       href: about.html
     - text: "Bristol!"
-      href: bristol.html
+      href: index.html
 output: distill::distill_article
