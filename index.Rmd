@@ -3,13 +3,11 @@ title: "Bristol"
 image: "vanessa.jpg"
 links:
   - label: LinkedIn
-    url: "https://linkedin.com/"
-  - label: Twitter
-    url: "https://twitter.com/"
+    url: "https://www.linkedin.com/in/vanessa-rathbone/"
   - label: GitHub
-    url: "https://github.com/"
+    url: "https://github.com/vrathbone"
   - label: Email
-    url: "mailto:email@email.com"
+    url: "mailto:vanessa_rathbone@ucsb.edu"
 output:
   postcards::jolla
 site: distill::distill_website
