@@ -1,0 +1,19 @@
+[
+  {
+    "path": "posts/2021-02-06-welcome/",
+    "title": "Bristol Facts",
+    "description": "This will be super interesting.",
+    "author": [
+      {
+        "name": "Vanessa Rathbone",
+        "url": {}
+      }
+    ],
+    "date": "2021-02-06",
+    "categories": [],
+    "contents": "\nTurns out I also like gophers. - Bristol\nDistill is a publication format for scientific and technical writing, native to the web.\nLearn more about using Distill at https://rstudio.github.io/distill.\n\n\n\n",
+    "preview": {},
+    "last_modified": "2021-02-16T20:27:21-08:00",
+    "input_file": {}
+  }
+]
