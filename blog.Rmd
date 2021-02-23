@@ -1,5 +1,5 @@
 ---
-title: "Blog"  # any name you want here
+title: "Projects"  # any name you want here
 listing: posts # do this exactly
 ---
 

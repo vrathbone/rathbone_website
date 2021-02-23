@@ -9,10 +9,8 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
-    - text: "Bristol!"
-      href: index.html
-    - text: "Blog"
+    - text: "Projects"
       href: blog.html
-    - text: "Resume"
+    - text: "Experience"
       href: resume.html
 output: distill::distill_article
