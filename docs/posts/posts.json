@@ -4,11 +4,11 @@
     "title": "Future 4 Fins",
     "description": "This project uses spatial prioritation for recommendations of marine protected areas in the Mozambique Channel to protect 26 crtically endangered shakk and ray species.",
     "author": [],
-    "date": "2021-02-21",
+    "date": "2021-02-25",
     "categories": [],
     "contents": "\nScalloped hammerhead shark (Sphyrna lewini), Source: Galapagos National ParkThis project was my master’s thesis along with four other team members. The goal of our project was to help the government ensure the long-term persistence of sharks and rays in Mozambique through an expanded network of marine protected areas. We created a reproducible model in R that prioritized areas to protect 26 species of sharks and rays with the least cost to stakeholders. Our project ran scenarios that looked at different fishing pressures on these species and how the reserve design changed based on each stakeholder.\nLearn more at https://www.future4fins.com/\n\n\n\n",
     "preview": {},
-    "last_modified": "2021-02-21T14:18:51-08:00",
+    "last_modified": "2021-02-25T11:24:37-08:00",
     "input_file": "F4F.utf8.md"
   }
 ]
