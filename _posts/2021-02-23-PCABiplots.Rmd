@@ -1,0 +1,93 @@
+---
+title: "Principle Components Analysis (PCA) of global environmental variables"
+description: |
+  Principal components analysis of nutrient contents in three types of diets.
+author:
+  - name: Vanessa Rathbone
+date: 02-23-2021
+output:
+  distill::distill_article:
+    self_contained: false
+    code_folding: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#attach libraries
+library(tidyverse)
+library(janitor)
+library(here)
+library(palmerpenguins)
+
+#for PCA
+library(ggfortify)
+
+#for ggplot customization
+library(readxl)
+library(gghighlight)
+library(lubridate)
+library(plotly)
+
+#to make compond figures
+library(patchwork)
+```
+
+## World Environmental Variables PCA Bioplot
+
+Here, we'll be assessing country-level social and economic statistics in relation to twenty-seven global environmental variables. The data includes variables such as mean temperature, mean precipitation and elevation. We'll be using a PCA bioplot to assess the correlation between these variables across countries on a global scale. This data could serve as a way to use environmental statistics to predict social and economic data. For example, are populations happier in sunnier or cloudier places? And are there differences in country's economies where there are higher elevations vs. lower elevations? 
+
+**Data Source:** [Venter, Zander](https://www.kaggle.com/zanderventer/environmental-variables-for-world-countries/data) and [Google Earth Engine](https://earthengine.google.com/)
+
+**Content:** This data is all acquired through [Google Earth Engine](https://earthengine.google.com/) where publicly available remote sensing datasets are collected. Most of the data is derived by calculating the mean for each country at a reduction scale of ~10km.
+
+```{r,fig.show='hide'}
+#All of your organized and well-annotated code (with warnings/messages suppressed) you wrote to wrangle data then run PCA, and to create a professional looking PCA biplot that appears (with a caption) in your knitted HTML
+
+#read in the data and basic wrangle
+world_env_var <- read_csv("world_env_vars.csv")
+
+#pca 
+world_pca <- world_env_var %>% 
+  select(elevation, cropland_cover:cloudiness, -ends_with("Month"), -temp_diurnal_range, -ends_with("Quart"), slope) %>% 
+  drop_na() %>% 
+  scale() %>% 
+  prcomp()
+
+# Variance explained by each PC
+screeplot(world_pca, type = "lines")
+
+# See the loadings (weighting for each principal component)
+world_pca$rotation
+
+world_complete <- world_env_var %>% 
+  drop_na(elevation, cropland_cover:cloudiness, -ends_with("Month"), -temp_diurnal_range, -ends_with("Quart"), slope)
+
+#188 observations of 28 variables (that's a lot of variables!)
+```
+
+
+```{r, fig.cap="*Figure 1. This PCA bioplot shows 66 percent variance of the 27 global environmental variables by country. The length of the red arrows approximates the variance of the variables, whereas the angels between them approximate their correlations.*"}
+#plot pca into a biplot
+autoplot(world_pca, 
+         data = world_complete, 
+         loadings = TRUE, 
+         loadings.label = TRUE,
+         loading.colour = "black", 
+         loadings.label.colour = "red",
+         loadings.label.vjust = 2.0
+         ) +
+  labs(title = "PCA Biplot of World Environmental Variables") +
+  theme_bw()
+```
+<br>
+
+#### Summary:
+
+- Strongly positively correlated variables include: tree canopy cover and cloudiness and tree cover and mean annual rainfall. In addition, tempurature seasonality and annual temperature range are also positively correlated. 
+- Strongly neagtively correlated variables include: slope or cloudiness and rain seasonality as well as isothermality and temperature seasonality. 
+- Not strongly correlated variables include: slope and annual temperature range, and cloudiness and mean annual temperature. 
+- Wind, elevation, cropland cover and slope all have smaller variance than annual mean temperature, rain seasonality and cloudiness. 
