@@ -1,5 +1,5 @@
 ---
-title: "Bristol"
+title: "Vanessa Rathbone"
 image: "vanessa.jpg"
 links:
   - label: LinkedIn
@@ -13,4 +13,6 @@ output:
 site: distill::distill_website
 ---
  
-I like lizards. 
+I am currently a master's student at the Bren School of Environmental Science and Management. My degree is in Conservation Planning with a focus on strategic environemntal media and communications. My research includes both terrestrial and marine ecosystems, with a focus on data management and science storytelling. 
+
+Before Bren, I worked in food start-ups, sustainable agriculture, outdoor education and most recently, I did brand strategy, communications and marketing for an advertising agency in Boulder, Colorado. 

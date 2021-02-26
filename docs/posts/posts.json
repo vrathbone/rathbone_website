@@ -1,0 +1,31 @@
+[
+  {
+    "path": "posts/2021-02-19-f4f/",
+    "title": "Future 4 Fins",
+    "description": "This project uses spatial prioritation for recommendations of marine protected areas in the Mozambique Channel to protect 26 crtically endangered shakk and ray species.",
+    "author": [],
+    "date": "2021-02-25",
+    "categories": [],
+    "contents": "\nScalloped hammerhead shark (Sphyrna lewini), Source: Galapagos National ParkThis project was my master’s thesis along with four other team members. The goal of our project was to help the government ensure the long-term persistence of sharks and rays in Mozambique through an expanded network of marine protected areas. We created a reproducible model in R that prioritized areas to protect 26 species of sharks and rays with the least cost to stakeholders. Our project ran scenarios that looked at different fishing pressures on these species and how the reserve design changed based on each stakeholder.\nLearn more at https://www.future4fins.com/\n\n\n\n",
+    "preview": {},
+    "last_modified": "2021-02-25T11:51:41-08:00",
+    "input_file": {}
+  },
+  {
+    "path": "posts/2021-02-06-welcome/",
+    "title": "Blog #1",
+    "description": "This will be super interesting.",
+    "author": [
+      {
+        "name": "Vanessa Rathbone",
+        "url": {}
+      }
+    ],
+    "date": "2021-02-06",
+    "categories": [],
+    "contents": "\nTurns out I also like gophers. - Bristol\nDistill is a publication format for scientific and technical writing, native to the web.\nLearn more about using Distill at https://rstudio.github.io/distill.\n\n\n\n",
+    "preview": {},
+    "last_modified": "2021-02-06T15:38:44-08:00",
+    "input_file": {}
+  }
+]
