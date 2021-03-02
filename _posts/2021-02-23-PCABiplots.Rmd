@@ -1,7 +1,7 @@
 ---
-title: "Principle Components Analysis (PCA) of global environmental variables"
+title: "Principle Components Analysis (PCA) and Biplots"
 description: |
-  Principal components analysis of nutrient contents in three types of diets.
+  Principal components analysis of global environmental variables.
 author:
   - name: Vanessa Rathbone
 date: 02-23-2021
