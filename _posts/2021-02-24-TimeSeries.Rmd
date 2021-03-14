@@ -15,7 +15,7 @@ This report explores adult fish passage of coho, jack coho and steelhead salmon 
 
 Data source: **Columbia River DART (Data Access in Real Time), 2010.** [Data Courtesy of U.S. Army Corps of Engineers, NWD and Chelan, Douglas, and Grant County PUDs, Yakima Klickitat Fisheries Project, Colville Tribes Fish & Wildlife (OBMEP), Oregon Department of Fish & Wildlife, Washington Department of Fish & Wildlife.](http://www.cbr.washington.edu/dart/query/adult_graph_text)
 
-![Sockeye Salmon *(Oncorhynchus nerka)* Credit: Jason Ching/U. Washington](../images/sockeye_salmon1.jpg)
+![Sockeye Salmon *(Oncorhynchus nerka)* Credit: Jason Ching/U. Washington](images/sockeye_salmon1.jpg)
 
 ![Credit: US Army Corp of Engineers (link: https://www.nwp.usace.army.mil/willamette/locks/)](../images/Willamette_Falls_Locks_area_map.jpg)
 **Figure 1.** Map of Willamette Fish Ladder. 

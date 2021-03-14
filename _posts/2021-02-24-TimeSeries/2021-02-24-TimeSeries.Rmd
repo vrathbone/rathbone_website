@@ -9,24 +9,6 @@ output:
     theme: spacelab
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## Overview {.tabset}
-
-This report explores adult fish passage of coho, jack coho and steelhead salmon recorded from January 2001 to December 2010 at the Willamette Falls fish ladder on the Willamette River (Oregon). This document consists of 3 tabs: a time series, a seasonplot, and annual counts by species. This data was recorded by and made accessible through the Columbia River DART project. Fish counting through Willamette Falls fishway was recorded using video cameras and time lapsed video recorders to record fish passage 24 hrs/day, 365 days/year.
-
-Data source: **Columbia River DART (Data Access in Real Time), 2010.** [Data Courtesy of U.S. Army Corps of Engineers, NWD and Chelan, Douglas, and Grant County PUDs, Yakima Klickitat Fisheries Project, Colville Tribes Fish & Wildlife (OBMEP), Oregon Department of Fish & Wildlife, Washington Department of Fish & Wildlife.](http://www.cbr.washington.edu/dart/query/adult_graph_text)
-
-![Sockeye Salmon *(Oncorhynchus nerka)* Credit: Jason Ching/U. Washington](../images/sockeye_salmon1.jpg)
-
-![Credit: US Army Corp of Engineers (link: https://www.nwp.usace.army.mil/willamette/locks/)](../images/Willamette_Falls_Locks_area_map.jpg)
-**Figure 1.** Map of Willamette Fish Ladder. 
-
-### Data preparation
-
-#### 1. Package & theme setup
 
 ```{r setup, echo=TRUE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -41,12 +23,25 @@ library(slider)
 library(patchwork)
 ```
 
-#### 2. Data wrangling
+## Overview {.tabset}
+
+This report explores adult fish passage of coho, jack coho and steelhead salmon recorded from January 2001 to December 2010 at the Willamette Falls fish ladder on the Willamette River (Oregon). This document consists of 3 tabs: a time series, a seasonplot, and annual counts by species. This data was recorded by and made accessible through the Columbia River DART project. Fish counting through Willamette Falls fishway was recorded using video cameras and time lapsed video recorders to record fish passage 24 hrs/day, 365 days/year.
+
+Data source: **Columbia River DART (Data Access in Real Time), 2010.** [Data Courtesy of U.S. Army Corps of Engineers, NWD and Chelan, Douglas, and Grant County PUDs, Yakima Klickitat Fisheries Project, Colville Tribes Fish & Wildlife (OBMEP), Oregon Department of Fish & Wildlife, Washington Department of Fish & Wildlife.](http://www.cbr.washington.edu/dart/query/adult_graph_text)
+
+![Sockeye Salmon *(Oncorhynchus nerka)* Credit: Jason Ching/U. Washington](sockeye_salmon1.jpg)
+
+![Credit: US Army Corp of Engineers (link: https://www.nwp.usace.army.mil/willamette/locks/)](Willamette_Falls_Locks_area_map.jpg)
+**Figure 1.** Map of Willamette Fish Ladder. 
+
+### Data preparation
+
+#### 1. Data wrangling
 
 ```{r, message=FALSE, warning=FALSE, echo=TRUE}
 
 #read in and wrangle the data
-fish_main <- read_csv(here("data", "willamette_fish_passage.csv")) %>%
+fish_main <- read_csv(here("_posts", "2021-02-24-TimeSeries", "data", "willamette_fish_passage.csv")) %>%
   replace(is.na(.), 0) %>%
   clean_names() %>% 
   select("date", "coho", "jack_coho", "steelhead") %>% 
@@ -80,7 +75,7 @@ fish_longer <- fish_main %>%
 
 ```
 
-#### 3. Data familiarizing and initial plotting
+#### 2. Data familiarizing and initial plotting
 
 ```{r, fig.show='hide', message=FALSE, warning=FALSE, echo=TRUE}
 
