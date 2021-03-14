@@ -1,14 +1,16 @@
 ---
-title: Time Series, Season Plots, Annual Counts
+title: "Time Series, Season Plots, Annual Counts"
 description: |
-  An exploration of adult fish passage at the Willamette Falls fish ladder on the Willamette River, Oregon from 2001-2010
-author: "Hannah Garcia, Vanessa Rathbone & Tom Wheeler"
+  An exploration of adult fish passage at the Willamette Falls fish ladder on the Willamette River, Oregon from 2001-2010.
+author: 
+  - name: Vanessa Rathbone, Hannah Garcia, & Tom Wheeler
+date: 02-24-2021
 output: 
-  html_document:
-    code_folding: hide
+  distill::distill_article:
+    self_contained: false
+    code_folding: true
     theme: spacelab
 ---
-
 
 ```{r setup, echo=TRUE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -34,14 +36,14 @@ Data source: **Columbia River DART (Data Access in Real Time), 2010.** [Data Cou
 ![Credit: US Army Corp of Engineers (link: https://www.nwp.usace.army.mil/willamette/locks/)](Willamette_Falls_Locks_area_map.jpg)
 **Figure 1.** Map of Willamette Fish Ladder. 
 
-### Data preparation
+### Data preparation (Vanessa)
 
 #### 1. Data wrangling
 
 ```{r, message=FALSE, warning=FALSE, echo=TRUE}
 
 #read in and wrangle the data
-fish_main <- read_csv(here("_posts", "2021-02-24-TimeSeries", "data", "willamette_fish_passage.csv")) %>%
+fish_main <- read_csv(here("_posts", "2021-02-24-TimeSeries", "willamette_fish_passage.csv")) %>%
   replace(is.na(.), 0) %>%
   clean_names() %>% 
   select("date", "coho", "jack_coho", "steelhead") %>% 

@@ -1,0 +1,124 @@
+---
+title: "Spatial Analysis with Rasters"
+description: |
+  Spatial analysis of cetacean occurances along the Southern Californian Coast. 
+author:
+  - name: Vanessa Rathbone
+date: 02-27-2021
+output:
+  distill::distill_article:
+    self_contained: false
+    code_folding: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(raster) ### NOTE: attaching this BEFORE tidyverse
+library(tidyverse)
+library(here)
+library(sf)
+library(fasterize)
+library(rnaturalearth)
+library(sp)
+library(ggspatial)
+
+```
+
+**Summary:**
+This data shows the probability of occurrence (based on relative environmental suitability, including species preferences for water temperature, depth, salinity, and distance to land) of 35 cetacean species that can be found in the California Bight.  
+
+**Data Source:** AquaMaps Team: Kaschner, K., Rius-Barile, J., Kesner-Reyes, K., Garilao, C., Kullander, S., Rees, T., & Froese, R. (2016). [AquaMaps: Predicted range maps for aquatic species.](www.aquamaps.org)
+
+### Read in the data 
+```{r}
+
+###bring in the cetaceans 
+#knitr::include_graphics(here('ca_cetaceans'))
+
+cetaceans_path <- here("_posts", "2021-02-26-Rasters", "ca_cetaceans")
+
+cetaceans_files <- list.files(cetaceans_path, full.names = TRUE)
+
+cetaceans_stack <- raster::stack(cetaceans_files)
+
+#plot(cetaceans_stack)
+
+###bring in the world map
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+#check the crs
+#st_crs(world)
+
+#transform world to 
+world <- st_transform(world, st_crs(cetaceans_stack))
+#st_crs(world)
+
+#check the world map data
+#sp::plot(ne_countries())
+
+#now select for only united states just for fun
+#sp::plot(ne_countries(country = 'united states of america'))
+                          
+```
+
+
+### Set a presence threshold and create a dataframe
+```{r}
+
+#create a function to set a presence threshold for anything above 0.6 to equal 1.
+
+is_cetaceans <- function(x, thresh = .6) {
+  y <- ifelse(x >= thresh, 1, NA)
+  return(y)
+}
+
+cetaceans_thresh <- calc(cetaceans_stack, fun = is_cetaceans)
+plot(cetaceans_thresh, col = 'green4')
+
+#view cetaceans raster stack as a data frame and add 0.6 presence threshold. >= 0.6 equals presence. 
+
+cetaceans_df <- raster::rasterToPoints(cetaceans_thresh) %>% 
+  as.data.frame() %>%  #gives x and y coordinates
+  pivot_longer(`Balaenoptera_acutorostrata`:`Ziphius_cavirostris`,
+               names_to = "species", 
+               values_to = "presence") %>% 
+  filter(presence == 1) %>% 
+  group_by(x, y) %>% 
+  count(presence)
+  
+###old code###
+
+#mutate(presence = case_when(presence >= .6 ~ 1,
+                              #presence <.6 ~ 0)) %>% 
+#cetaceans_df[is.na(cetaceans_df[])] <- 0
+#turn it into a simple feature file to add geometry
+#cetaceans_sf <- st_as_sf(cetaceans_df, coords = c("x", "y"))
+#plot(cetaceans_sf)
+
+```
+
+
+### Create a static species presence map
+```{r, fig.cap="*Figure 1. Presence data for 35 cetacean species in the California Bight with a presence threshold of 0.6. This data is from AquaMaps predicted range maps.*"}
+
+#plot it with the world spatial data 
+
+ggplot() +
+geom_raster(data = cetaceans_df, aes(x = x, y = y, fill = n)) +
+  geom_sf(data = world) +
+  coord_sf(expand = 0, xlim = c(-125,-115), ylim = c(32,38)) +
+  scale_fill_gradient(low = 'white', high = 'slateblue4') +
+  theme_void() +
+  theme(panel.background = element_rect(fill = 'slateblue4')) +
+  labs(title = "Presence of 35 cetacean species in the California Bight",
+       subtitle = "Map by Vanessa Rathbone",
+       fill = "Number of Occurances") +
+  annotation_north_arrow(aes(location = "br")) +
+  annotation_scale(aes(location = "tr"))
+
+
+```
+
+
+
