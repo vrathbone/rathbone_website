@@ -1,0 +1,123 @@
+---
+title: "Circular Barplot"
+description: |
+  Data Visualization of global plastic waste using the circular barplot.
+author:
+  - name: Vanessa Rathbone
+date: 02-25-2021
+output:
+  distill::distill_article:
+    self_contained: false
+    code_folding: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+library(tidyverse)
+library(here)
+library(tidyverse)
+library(hrbrthemes)
+library(kableExtra)
+library(viridis)
+
+```
+
+
+```{r}
+
+#read in and wrangle the data
+plastics <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-01-26/plastics.csv')
+  #mutate(across(where(is.character), tolower))
+
+plastics$country[plastics$country == "Taiwan_ Republic of China (ROC)"] <- "Taiwan"
+plastics$country[plastics$country == "United States of America"] <- "USA"
+plastics$country[plastics$country == "NIGERIA"] <- "Nigeria"
+plastics$country[plastics$country == "ECUADOR"] <- "Ecuador"
+
+#tuesdata <- tidytuesdayR::tt_load('2021-01-26')
+#plastics <- tuesdata$plastics
+
+#alt df for circular barplot of countries total plastic consumption 
+plastics_all <- plastics %>% 
+  select(country, grand_total) %>%
+  drop_na() %>% 
+  group_by(country) %>% 
+  summarize(grand_total = sum(grand_total)) %>% 
+  arrange(desc(grand_total)) %>% 
+  slice(-4) %>% 
+  head(15) %>% 
+  mutate(country = factor(country, country))
+
+
+#alt df with only grand_total plastics from top 15 countries or 4 selected parent companies in line 38
+#plastics_top10 <- plastics %>% 
+  #select(year, parent_company, grand_total) %>% 
+  #filter(parent_company %in% c("the coca-cola company", "pepsico", "nestlé", "unilever")) %>%
+  #drop_na() %>% 
+  #group_by(parent_company) %>% 
+  #summarize(grand_total = sum(grand_total)) %>% #or summarize(grand_total = n())
+  #slice_max(grand_total, n = 15)
+
+```
+
+
+```{r}
+
+####make circular barplot
+#_________________#
+
+# Set a number of 'empty bar'
+empty_bar=1
+
+# Add lines to the initial plastics df
+to_add = matrix(NA, empty_bar, ncol(plastics_all))
+colnames(to_add) = colnames(plastics_all)
+plastics_all = rbind(plastics_all, to_add)
+plastics_all$id = seq(1, nrow(plastics_all))
+
+# Get the name and the y position of each label
+label_plastics = plastics_all
+number_of_bar = nrow(label_plastics)
+angle= 90 - 360 * (label_plastics$id-0.5) /number_of_bar # I substract 0.5 because the letter must have the angle of the center of the bars. Not extreme right(1) or extreme left (0)
+label_plastics$hjust<-ifelse( angle < -90, 1, 0)
+label_plastics$angle<-ifelse(angle < -90, angle + 180, angle)
+label_plastics$country <- gsub("United States", "US", label_plastics$country)
+label_plastics$country <- paste(label_plastics$country, " (", label_plastics$grand_total,")", sep="")
+
+#________________#
+
+
+#### Make the plot
+plastics_barplot <- 
+  ggplot(data = plastics_all, aes(x = as.factor(country), y = grand_total)) + # Note that id is a factor. If x is numeric, there is some space between the first bar
+  geom_col(aes(fill = country), show.legend = FALSE) +
+  ylim(-11900,245000) +   # Limits of the plot = very important. The negative value controls the size of the inner circle, the positive one is useful to add size over each bar
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank(),
+    plot.margin = unit(rep(0,6), "cm") # This remove unnecessary margin around plot
+  ) +
+    coord_polar(start = 75) + # This makes the coordinate polar instead of cartesian.
+  geom_text(data=label_plastics, 
+            aes(x = id, y = grand_total+200, label = country), 
+            color = "black", 
+            fontface = "bold",
+            alpha = 0.6, 
+            size = 2.5, 
+            angle = label_plastics$angle, 
+            hjust = label_plastics$hjust,
+            inherit.aes = FALSE)
+ 
+plastics_barplot
+
+
+
+```
+
+

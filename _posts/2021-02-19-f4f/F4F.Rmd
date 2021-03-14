@@ -1,7 +1,7 @@
 ---
 title: "Future 4 Fins"
 description: |
-  This project uses spatial prioritation for recommendations of marine protected areas in the Mozambique Channel to protect 26 crtically endangered shakk and ray species. 
+  This project uses spatial prioritation for recommendations of marine protected areas in the Mozambique Channel to protect 26 crtically endangered shark and ray species. 
 author:
 output:
   distill::distill_article:

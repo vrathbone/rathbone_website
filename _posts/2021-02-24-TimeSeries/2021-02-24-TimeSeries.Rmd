@@ -1,0 +1,232 @@
+---
+title: Time Series, Season Plots, Annual Counts
+description: |
+  An exploration of adult fish passage at the Willamette Falls fish ladder on the Willamette River, Oregon from 2001-2010
+author: "Hannah Garcia, Vanessa Rathbone & Tom Wheeler"
+output: 
+  html_document:
+    code_folding: hide
+    theme: spacelab
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview {.tabset}
+
+This report explores adult fish passage of coho, jack coho and steelhead salmon recorded from January 2001 to December 2010 at the Willamette Falls fish ladder on the Willamette River (Oregon). This document consists of 3 tabs: a time series, a seasonplot, and annual counts by species. This data was recorded by and made accessible through the Columbia River DART project. Fish counting through Willamette Falls fishway was recorded using video cameras and time lapsed video recorders to record fish passage 24 hrs/day, 365 days/year.
+
+Data source: **Columbia River DART (Data Access in Real Time), 2010.** [Data Courtesy of U.S. Army Corps of Engineers, NWD and Chelan, Douglas, and Grant County PUDs, Yakima Klickitat Fisheries Project, Colville Tribes Fish & Wildlife (OBMEP), Oregon Department of Fish & Wildlife, Washington Department of Fish & Wildlife.](http://www.cbr.washington.edu/dart/query/adult_graph_text)
+
+![Sockeye Salmon *(Oncorhynchus nerka)* Credit: Jason Ching/U. Washington](../images/sockeye_salmon1.jpg)
+
+![Credit: US Army Corp of Engineers (link: https://www.nwp.usace.army.mil/willamette/locks/)](../images/Willamette_Falls_Locks_area_map.jpg)
+**Figure 1.** Map of Willamette Fish Ladder. 
+
+### Data preparation
+
+#### 1. Package & theme setup
+
+```{r setup, echo=TRUE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+library(lubridate)
+library(tsibble)
+library(janitor)
+library(feasts)
+library(slider)
+library(patchwork)
+```
+
+#### 2. Data wrangling
+
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+
+#read in and wrangle the data
+fish_main <- read_csv(here("data", "willamette_fish_passage.csv")) %>%
+  replace(is.na(.), 0) %>%
+  clean_names() %>% 
+  select("date", "coho", "jack_coho", "steelhead") %>% 
+  mutate(date = lubridate::mdy(date)) %>% 
+  group_by(date, coho, jack_coho, steelhead) %>% 
+  summarize(total_count = sum(coho, jack_coho, steelhead))
+
+#prepare time series dataframe 
+fish_ts <- fish_main %>% 
+  as_tsibble(key = NULL, index = date)
+  
+#convert time series to tsibble and use pivot_longer to reformat
+fish_ts_longer <- fish_main %>% 
+  as_tsibble(key = NULL, index = date) %>% 
+  pivot_longer("coho":"steelhead",
+               names_to = "species",
+               values_to = "value") %>% 
+  mutate(species = 
+         ifelse(species == "coho", "Coho",
+         ifelse(species == "jack_coho", "Jack Coho", 
+         ifelse(species == "steelhead", "Steelhead", 
+                "" )))) %>% 
+  select(-total_count) %>% 
+  rename(total_count = value)
+
+#formate data for tab 3
+fish_longer <- fish_main %>% 
+  pivot_longer("coho":"steelhead",
+               names_to = "species",
+               values_to = "value")
+
+```
+
+#### 3. Data familiarizing and initial plotting
+
+```{r, fig.show='hide', message=FALSE, warning=FALSE, echo=TRUE}
+
+#explore the data
+
+#individually plotting over time
+ggplot() +
+  geom_line(data = fish_ts, aes(x = date, y = jack_coho)) +
+  geom_line(data = fish_ts, aes(x = date, y = steelhead)) +
+  geom_line(data = fish_ts, aes(x = date, y = coho))
+
+#explore data by month and year using index_by() 
+
+#by month
+fish_month <- fish_ts_longer %>% 
+  index_by(yr_mo = ~yearmonth(.)) %>% 
+  group_by(yr_mo) %>% 
+  summarize(month_mean_count = mean(total_count))
+
+ggplot(data = fish_month, aes(x = yr_mo, y = month_mean_count)) +
+  geom_line() +
+  facet_wrap(~month(yr_mo, label = TRUE))
+
+#by year
+fish_year <- fish_ts_longer %>% 
+  index_by(yearly = ~year(.)) %>% 
+  summarize(yearly_mean_count = mean(total_count))
+
+ggplot(data = fish_year, aes(x = yearly, y = yearly_mean_count)) +
+  geom_col() +
+  facet_wrap(~yearly)
+
+```
+
+### Tab 1 - Time Series (Hannah)
+
+```{r, fig.cap="**Figure 2.** Time series of Coho, Jack Coho, and Steelhead counts on the Willamette fish ladder between 2001 and 2010."}
+# explore data with initial graph
+# ggplot(data = fish_ts_longer, aes(x=date, y=total_count)) +
+#   geom_line() +
+#   facet_wrap(~species)
+
+# get species alone and use patchwork
+# coho
+coho_tab1 <- fish_ts_longer %>% 
+  filter(species == "Coho")
+
+coho_graph <- ggplot(data=coho_tab1, aes(x=date, y=total_count)) +
+  geom_line() +
+  theme_minimal() +
+  labs(title = "Coho", y="total count")
+
+# jack_coho
+jackcoho_tab1 <- fish_ts_longer %>% 
+  filter(species == "Jack Coho")
+
+jackcoho_graph <- ggplot(data=jackcoho_tab1, aes(x=date, y=total_count)) +
+  geom_line() +
+  theme_minimal() +
+  labs(title = "Jack Coho", y = "total count")
+
+# steelhead
+steelhead_tab1 <- fish_ts_longer %>% 
+  filter(species == "Steelhead")
+
+steelhead_graph <- ggplot(data=steelhead_tab1, aes(x=date, y=total_count)) +
+  geom_line() +
+  theme_minimal() +
+  labs(title = "Steelhead", y = "total count")
+
+# patchwork
+
+tab1_comb <- coho_graph / jackcoho_graph / steelhead_graph
+tab1_comb
+```
+
+Time Series Plots Discussion
+
+- Both Coho and Jack Coho counts do not have the same seasonality that Steelhead have. Their counts are relatively low and there is a lack of an overall trend. It seems, though, that as more data gets collected, we may see some seasonality with their counts. 
+
+### Tab 2 - Season Plots (Vanessa)
+```{r, fig.cap="**Figure 3.** Season plots of Coho, Jack Coho, and Steelhead counts on the Willamette fish ladder between 2001 and 2010.", messages=FALSE, warning=FALSE}
+
+#explore total counts with season plots
+
+#fish_month %>% 
+  #gg_season(y = month_mean_count)
+
+#----------#
+
+#explore counts per species with season plots
+
+#fish_ts %>%
+  #gg_season(y = total_count)
+
+#----------#
+
+# seasonal subseries plot
+
+#fish_month %>% 
+  #gg_subseries(month_mean_count)
+
+#----------#
+
+#final sesason plot
+
+fish_ts_longer %>% 
+  gg_season(y = total_count) +
+  theme_minimal() +
+  labs(x = "Date", y = "Total Count", 
+       title = "Total Counts for Coho, Jack Coho, and Steelhead at Willamette Falls, Oregon",
+       subtitle = "2001-2010")
+
+```
+
+Season Plots Discussion
+
+- Observed seasonal patterns can be seen across all three species. Coho and jack coho have similar seasonal passage of the falls, whereas steelhead have a longer, more sustained seasonal passage.
+
+- Coho and jack coho have similar seasonal patterns with a serge occurring between late September and early October. Coho appear to have an increase in number of fish passing through in 2009 and 2010. Jack coho had a their highest count in 2008. 
+
+- Steelhead trout pass through the falls over a much longer, sustained period between January through July. There is a slight rise in counts in May and June every year and then much less after July and August. In general, there are more steelhead passing through the falls each year than coho and jack coho. 
+
+### Tab 3 - Annual Counts by Species (Tom)
+```{r, fig.cap="**Figure 4:** The line graph above displays changes in fish passage by fish species between 2000 and 2010.", message=FALSE, warning=FALSE}
+fish_annual <- fish_longer %>% 
+  mutate(year = as.Date(as.character(date),format = "%Y")) %>%
+  group_by(year, species) %>% 
+  summarize(fish_yearly_total = sum(value))
+
+fish_annual %>% 
+  ggplot(aes(x = year, y = fish_yearly_total)) +
+  geom_line(aes(color=species)) +
+  theme_minimal() +
+  scale_x_date(date_labels = "%Y") +
+  labs(
+    title = "Annual totals for fish passage by species (2000-2010)",
+    x = "Year",
+    y = "Count of fish passage"
+  )
+```
+
+Annual Trends Discussion
+
+- Steelhead observations appear to be most volatile over time with large spikes in passage over the first 5 years eventual stabilization from 2005 to 2009 followed by a large population spike.
+
+- Jack coho's population remains relatively low and stable over time, seeing a small peak in population in 2008.
+
+- Coho population has mild volatile over the first 8 years followed by a spike in population grow after 2008.

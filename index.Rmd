@@ -1,6 +1,6 @@
 ---
 title: "Vanessa Rathbone"
-image: "vanessa.jpg"
+image: "headshot.jpg"
 links:
   - label: LinkedIn
     url: "https://www.linkedin.com/in/vanessa-rathbone/"
