@@ -1,7 +1,7 @@
 ---
 title: "Spatial Analysis with Rasters"
 description: |
-  Spatial analysis of cetacean occurances along the Southern Californian Coast. 
+  Species richness of cetacean occurances along the Southern Californian coast. 
 author:
   - name: Vanessa Rathbone
 date: 02-27-2021
@@ -36,7 +36,7 @@ This data shows the probability of occurrence (based on relative environmental s
 ###bring in the cetaceans 
 #knitr::include_graphics(here('ca_cetaceans'))
 
-cetaceans_path <- here("_posts", "2021-02-26-Rasters", "ca_cetaceans")
+cetaceans_path <- here("ca_cetaceans")
 
 cetaceans_files <- list.files(cetaceans_path, full.names = TRUE)
 
